@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 · Managing Marketing Information</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0D2137;--teal:#007B6E;--lime:#3DDC84;--white:#fff;--offwhite:#F5F7F6;--muted:#7A9099;--border:rgba(13,33,55,0.1);--shadow:0 2px 16px rgba(13,33,55,0.08);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--offwhite);color:var(--navy);min-height:100vh;}
+
+.topbar{background:var(--navy);padding:13px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:1px;}
+.prog-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.prog-text{font-size:11px;color:rgba(255,255,255,.5);}
+.prog-track{width:160px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;}
+.prog-fill{height:100%;background:var(--lime);border-radius:2px;transition:width .4s ease;}
+
+.layout{display:flex;min-height:calc(100vh - 48px);}
+.sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);padding:16px 0;position:sticky;top:48px;height:calc(100vh - 48px);overflow-y:auto;}
+.nav-section-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:10px 18px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 18px;cursor:pointer;font-size:13px;color:var(--muted);border-left:3px solid transparent;transition:all .15s;line-height:1.3;}
+.nav-item:hover{background:var(--offwhite);color:var(--navy);}
+.nav-item.active{color:var(--teal);border-left-color:var(--teal);background:#F0FAF7;font-weight:500;}
+.nav-item.done{color:#999;}
+.nav-item.done .ndot{background:var(--teal);}
+.ndot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .2s;}
+.nav-item.active .ndot{background:var(--teal);}
+.nav-score{margin-left:auto;font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;background:#E6F8F1;color:var(--teal);display:none;}
+.nav-item.done .nav-score{display:inline-block;}
+
+.main{flex:1;padding:36px 40px 100px;max-width:780px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+.eyebrow{display:inline-flex;align-items:center;gap:6px;background:#E6F8F1;border:1px solid rgba(0,123,110,.2);color:var(--teal);border-radius:100px;font-size:11px;font-weight:600;padding:4px 12px;margin-bottom:14px;}
+.sec-num{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px;}
+.sec-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1.2;color:var(--navy);margin-bottom:8px;}
+.sec-title span{color:var(--teal);}
+.sec-lead{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:26px;max-width:580px;}
+
+.divider{height:1px;background:var(--border);margin:24px 0;}
+.block-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.body-text{font-size:14px;line-height:1.8;color:#2C3E50;margin-bottom:10px;}
+.strong{font-weight:600;color:var(--navy);}
+
+.hbox{background:#F0FAF7;border-left:3px solid var(--teal);border-radius:0 10px 10px 0;padding:13px 16px;margin:14px 0;font-size:14px;line-height:1.65;color:var(--navy);}
+.hbox strong{color:var(--teal);}
+.wbox{background:#FAEEDA;border-left:3px solid #BA7517;border-radius:0 10px 10px 0;padding:13px 16px;margin:14px 0;font-size:14px;line-height:1.65;color:#3D2800;}
+.ebox{background:var(--offwhite);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:14px 0;}
+.ebox .etag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.ebox .etext{font-size:14px;line-height:1.65;color:var(--navy);}
+
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:10px;margin:14px 0;}
+.ccard{background:var(--white);border:1px solid var(--border);border-radius:13px;padding:14px;box-shadow:var(--shadow);}
+.ccard .cicon{font-size:22px;margin-bottom:7px;}
+.ccard .ctitle{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.ccard .cbody{font-size:12px;line-height:1.55;color:var(--muted);}
+
+.steps{display:flex;flex-direction:column;gap:12px;margin:14px 0;}
+.step{display:flex;gap:13px;align-items:flex-start;}
+.snum{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--lime);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:13px;font-weight:800;}
+.stitle{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+.sdesc{font-size:13px;line-height:1.6;color:var(--muted);}
+
+.ctable{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+.ctable th{background:var(--navy);color:var(--white);padding:9px 13px;text-align:left;font-family:'Syne',sans-serif;font-size:11px;letter-spacing:.05em;}
+.ctable th:first-child{border-radius:8px 0 0 0;}.ctable th:last-child{border-radius:0 8px 0 0;}
+.ctable td{padding:9px 13px;border-bottom:1px solid var(--border);line-height:1.5;vertical-align:top;}
+.ctable tr:nth-child(even) td{background:#F9FBFA;}
+.ctable tr:last-child td{border-bottom:none;}
+.tprimary{background:#E6F8F1;color:#085041;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;}
+.tsecondary{background:#EBF3FF;color:#1A5FAD;border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;}
+
+/* REFLECTION BOX */
+.reflect-box{background:var(--white);border:1.5px dashed var(--teal);border-radius:14px;padding:18px;margin:22px 0;}
+.reflect-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.reflect-q{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--navy);margin-bottom:10px;line-height:1.4;}
+.reflect-hint{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
+.reflect-reveal-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.reflect-reveal-btn:hover{border-color:var(--teal);color:var(--teal);}
+.reflect-answer{display:none;margin-top:10px;background:var(--offwhite);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.65;color:var(--navy);}
+.reflect-answer.show{display:block;animation:fadeIn .2s ease;}
+
+/* CASE STUDY */
+.case-box{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;margin:22px 0;box-shadow:var(--shadow);}
+.case-tag{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#993C1D;background:#FAECE7;border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:10px;}
+.case-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+.case-body{font-size:13px;line-height:1.7;color:#2C3E50;margin-bottom:14px;}
+.case-question{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+.case-opts{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+.case-opt{display:flex;align-items:flex-start;gap:9px;padding:9px 13px;border:1.5px solid var(--border);border-radius:9px;cursor:pointer;font-size:13px;color:var(--navy);transition:all .15s;background:var(--white);line-height:1.4;}
+.case-opt:hover:not(.disabled){border-color:var(--teal);background:#F0FAF7;}
+.case-opt.correct{border-color:#1D9E75;background:#E6F8F1;color:#085041;}
+.case-opt.wrong{border-color:#D85A30;background:#FEF0EB;color:#712B13;}
+.case-opt.disabled{cursor:default;}
+.case-opt .cletter{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:var(--offwhite);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Syne',sans-serif;margin-top:1px;}
+.case-opt.correct .cletter{background:#1D9E75;border-color:#1D9E75;color:white;}
+.case-opt.wrong .cletter{background:#D85A30;border-color:#D85A30;color:white;}
+.case-feedback{font-size:13px;line-height:1.6;padding:10px 13px;border-radius:8px;display:none;margin-top:4px;}
+.cf-correct{background:#E6F8F1;color:#085041;}
+.cf-wrong{background:#FEF0EB;color:#993C1D;}
+.case-feedback.show{display:block;animation:fadeIn .2s ease;}
+
+/* SECTION SCORE */
+.sec-score-bar{display:flex;align-items:center;justify-content:space-between;background:var(--offwhite);border-radius:10px;padding:10px 14px;margin:18px 0;}
+.ssb-label{font-size:12px;color:var(--muted);}
+.ssb-val{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--teal);}
+
+/* FINAL QUIZ */
+.fquiz-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px;margin-top:24px;box-shadow:var(--shadow);}
+.fq-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.fq-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--navy);}
+.fq-prog{font-size:12px;color:var(--muted);}
+.fq-question{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;line-height:1.4;}
+.fq-topic{font-size:11px;color:var(--teal);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;}
+.fq-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.fq-opt{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;font-size:14px;color:var(--navy);transition:all .15s;background:var(--white);line-height:1.4;}
+.fq-opt:hover:not(.disabled){border-color:var(--teal);background:#F0FAF7;}
+.fq-opt.correct{border-color:#1D9E75;background:#E6F8F1;color:#085041;}
+.fq-opt.wrong{border-color:#D85A30;background:#FEF0EB;color:#712B13;}
+.fq-opt.disabled{cursor:default;}
+.fq-badge{flex-shrink:0;width:28px;height:28px;border-radius:7px;background:var(--offwhite);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Syne',sans-serif;margin-top:1px;}
+.fq-opt.correct .fq-badge{background:#1D9E75;border-color:#1D9E75;color:white;}
+.fq-opt.wrong .fq-badge{background:#D85A30;border-color:#D85A30;color:white;}
+.fq-feedback{font-size:13px;line-height:1.6;padding:10px 14px;border-radius:8px;display:none;margin-bottom:10px;}
+.fqf-c{background:#E6F8F1;color:#085041;}
+.fqf-w{background:#FEF0EB;color:#993C1D;}
+.fq-feedback.show{display:block;}
+.fq-next{width:100%;padding:12px;background:var(--navy);color:var(--white);border:none;border-radius:10px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:none;transition:all .15s;}
+.fq-next:hover{background:#1A3550;}
+.fq-next.show{display:block;}
+
+/* RESULTS */
+.results-wrap{text-align:center;padding:30px 10px;}
+.ring-wrap{position:relative;width:120px;height:120px;margin:0 auto 16px;}
+.ring-wrap svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ring-score{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--navy);line-height:1;}
+.ring-of{font-size:12px;color:var(--muted);}
+.results-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.results-sub{font-size:14px;color:var(--muted);line-height:1.6;max-width:380px;margin:0 auto 24px;}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+.bdtile{background:var(--offwhite);border-radius:12px;padding:14px 10px;text-align:center;}
+.bdval{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--navy);}
+.bdlbl{font-size:11px;color:var(--muted);margin-top:2px;}
+.review-list{text-align:left;margin-bottom:24px;}
+.review-heading{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:16px 0 10px;border-top:1px solid var(--border);}
+.review-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.review-icon{flex-shrink:0;font-size:14px;margin-top:1px;}
+.review-q{flex:1;line-height:1.5;color:var(--navy);}
+.review-ans{font-size:11px;color:var(--muted);margin-top:2px;}
+.btn-replay{display:inline-flex;align-items:center;gap:7px;background:var(--teal);color:var(--white);border:none;border-radius:11px;padding:12px 26px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn-replay:hover{background:#005E54;}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;margin-top:36px;padding-top:22px;border-top:1px solid var(--border);}
+.btn-nav{display:flex;align-items:center;gap:7px;padding:10px 20px;border-radius:11px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--navy);transition:all .15s;}
+.btn-nav:hover{border-color:var(--teal);color:var(--teal);}
+.btn-nav.primary{background:var(--navy);color:var(--white);border-color:var(--navy);}
+.btn-nav.primary:hover{background:#1A3550;}
+.btn-nav:disabled{opacity:.3;cursor:not-allowed;}
+
+@media(max-width:680px){.sidebar{display:none;}.main{padding:22px 16px 60px;}.sec-title{font-size:20px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-title">Chapter 4 · Self-Paced Learning</div>
+    <div class="topbar-sub">MKT1034 / MKT2224 · Sunway University</div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-text" id="prog-text">Section 1 of 7</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:14%"></div></div>
+  </div>
+</div>
+
+<div class="layout">
+  <nav class="sidebar">
+    <div class="nav-section-label">Module sections</div>
+    <div class="nav-item active" onclick="goTo(0)"><div class="ndot"></div>Introduction<span class="nav-score" id="ns-0"></span></div>
+    <div class="nav-item" onclick="goTo(1)"><div class="ndot"></div>Customer Insights & MIE<span class="nav-score" id="ns-1"></span></div>
+    <div class="nav-item" onclick="goTo(2)"><div class="ndot"></div>Sources of Information<span class="nav-score" id="ns-2"></span></div>
+    <div class="nav-item" onclick="goTo(3)"><div class="ndot"></div>Marketing Research Process<span class="nav-score" id="ns-3"></span></div>
+    <div class="nav-item" onclick="goTo(4)"><div class="ndot"></div>Big Data & Analytics<span class="nav-score" id="ns-4"></span></div>
+    <div class="nav-item" onclick="goTo(5)"><div class="ndot"></div>Ethics & Privacy<span class="nav-score" id="ns-5"></span></div>
+    <div class="nav-item" onclick="goTo(6)"><div class="ndot"></div>Final Quiz & Summary<span class="nav-score" id="ns-6"></span></div>
+  </nav>
+
+  <main class="main">
+
+    <!-- SEC 0: INTRO -->
+    <div class="section active" id="sec-0">
+      <div class="eyebrow">Chapter 4 · Kotler & Armstrong 19th Ed.</div>
+      <div class="sec-title">Managing Marketing Information to Gain <span>Customer Insights</span></div>
+      <div class="sec-lead">Your lecturer is not available this session. This module is your lecture. Work through each section carefully — do not rush. There are reading sections, case studies, reflection questions, and a final 10-question quiz at the end.</div>
+
+      <div class="card-grid">
+        <div class="ccard"><div class="cicon">📖</div><div class="ctitle">6 content sections</div><div class="cbody">Each covers a core topic from Chapter 4 with explanations, Malaysian examples, and case studies.</div></div>
+        <div class="ccard"><div class="cicon">🧠</div><div class="ctitle">Case questions</div><div class="cbody">Each section has 2–3 scenario-based questions. These are harder than simple definitions — think carefully.</div></div>
+        <div class="ccard"><div class="cicon">💭</div><div class="ctitle">Reflection prompts</div><div class="cbody">At least one "think about this" question per section. Reveal the answer only after you have thought it through.</div></div>
+        <div class="ccard"><div class="cicon">🎯</div><div class="ctitle">Final quiz</div><div class="cbody">10 application-level questions at the end covering all sections. Your score is tracked.</div></div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="block-label">What this chapter is about</div>
+      <p class="body-text">Every business decision — launching a new product, entering a new market, changing a price, redesigning a package — requires information. Chapter 4 asks: where does that information come from, how is it gathered responsibly, and how is it turned into something useful?</p>
+      <p class="body-text">The answer is not simply "do a survey." Modern marketing information management involves internal databases, competitive intelligence, systematic research, big data, AI-powered analytics, and careful attention to consumer privacy. Getting it right can mean the difference between a successful campaign and an expensive failure.</p>
+
+      <div class="divider"></div>
+      <div class="block-label">Learning objectives</div>
+      <div class="steps">
+        <div class="step"><div class="snum">1</div><div><div class="stitle">Explain the importance of customer insights and the Marketing Information Ecosystem</div><div class="sdesc">Understand what customer insights are, why data alone is insufficient, and what a MIE does.</div></div></div>
+        <div class="step"><div class="snum">2</div><div><div class="stitle">Describe and distinguish between the three main sources of marketing information</div><div class="sdesc">Internal databases, competitive marketing intelligence, and marketing research — when to use each.</div></div></div>
+        <div class="step"><div class="snum">3</div><div><div class="stitle">Outline and apply the four-step marketing research process</div><div class="sdesc">Define the problem, develop a plan, implement it, and interpret findings — with attention to primary vs secondary data.</div></div></div>
+        <div class="step"><div class="snum">4</div><div><div class="stitle">Explain big data, CRM, and marketing analytics including the role of AI</div><div class="sdesc">Understand what big data is, what challenges it creates, and how CRM and analytics tools help.</div></div></div>
+        <div class="step"><div class="snum">5</div><div><div class="stitle">Discuss ethical issues in marketing research and data collection</div><div class="sdesc">Identify key concerns around consumer privacy, sugging, intrusion, and Malaysia's PDPA.</div></div></div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" disabled>← Previous</button>
+        <button class="btn-nav primary" onclick="goTo(1)">Begin Section 1 →</button>
+      </div>
+    </div>
+
+    <!-- SEC 1: CUSTOMER INSIGHTS & MIE -->
+    <div class="section" id="sec-1">
+      <div class="sec-num">Section 1 of 6</div>
+      <div class="sec-title">Customer Insights & the <span>Marketing Information Ecosystem</span></div>
+      <div class="sec-lead">Data is everywhere. The challenge is turning it into understanding that actually helps make better decisions.</div>
+
+      <div class="block-label">The problem with too much data</div>
+      <p class="body-text">In the digital age, companies are not short of data. Every website visit, purchase, social media interaction, and loyalty card swipe generates information. The real problem is the opposite: <span class="strong">information overload</span>. Managers are often buried in data they cannot interpret, while still missing the specific insight they actually need.</p>
+      <div class="hbox"><strong>Customer insights</strong> are fresh, deep understandings of customers and the marketplace derived from marketing information. They become the basis for creating customer value and building lasting relationships. The key word is <em>actionable</em> — an insight you cannot act on is just noise.</div>
+      <p class="body-text">Think about the difference between data and insight: <em>"42% of our customers aged 18–24 abandon their cart after adding 3 or more items"</em> is data. The insight is <em>"young customers are using our app like a wishlist, not a store — we need a save-for-later feature and a nudge campaign."</em> The data pointed to the problem; the insight told you what to do about it.</p>
+
+      <div class="ebox">
+        <div class="etag">Malaysian Example — Shopee</div>
+        <div class="etext">Shopee Malaysia processes millions of browsing and purchase events daily. A data point says "searches for 'wireless earphones' increased 340% in March." The customer insight is "Malaysians are preparing for the new university semester and upgrading tech — launch a student bundle promotion in late February next year." One becomes a marketing strategy; the other is just a number.</div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="block-label">The Marketing Information Ecosystem (MIE)</div>
+      <p class="body-text">The <span class="strong">Marketing Information Ecosystem (MIE)</span> is the system of people and procedures for assessing information needs, developing the needed information, and helping decision-makers use it to generate and validate actionable customer and market insights.</p>
+      <p class="body-text">A good MIE does three things in balance:</p>
+      <div class="card-grid">
+        <div class="ccard"><div class="cicon">📋</div><div class="ctitle">Assesses needs</div><div class="cbody">Figures out what information decision-makers actually need — not just what they say they want. Managers often ask for everything; a good MIE filters for what is truly necessary.</div></div>
+        <div class="ccard"><div class="cicon">🔍</div><div class="ctitle">Develops information</div><div class="cbody">Gathers data from internal records, competitive intelligence, and formal research. Chooses the most efficient and appropriate source for each question.</div></div>
+        <div class="ccard"><div class="cicon">💡</div><div class="ctitle">Generates insights</div><div class="cbody">Analyses information and presents it in a way that helps managers take action. A report nobody reads is a failure of the MIE.</div></div>
+      </div>
+      <div class="wbox">⚖️ <strong>Key balance:</strong> A good MIE balances what managers <em>want</em> to know, what they <em>need</em> to know, and what the company can <em>feasibly and affordably</em> provide. More information is not always better — information overload slows decisions and wastes resources.</div>
+
+      <!-- REFLECT -->
+      <div class="reflect-box">
+        <div class="reflect-label">💭 Think about this</div>
+        <div class="reflect-q">A marketing manager at a Malaysian bank says: "I want data on every customer interaction — every call, every click, every complaint — updated in real time." Is this a good information need? What is the problem with it?</div>
+        <div class="reflect-hint">Think about the balance a good MIE must strike. Consider what "feasible" and "actionable" mean in practice.</div>
+        <button class="reflect-reveal-btn" onclick="revealReflect(this)">Reveal suggested answer</button>
+        <div class="reflect-answer">This is an example of <strong>wanting everything</strong> rather than defining a specific information need. While real-time data on all interactions sounds useful, it creates an information overload problem — nobody can monitor all of it meaningfully. A better approach would be to identify the specific decision being made (e.g., "we want to reduce call centre complaints") and then ask only for the data needed to answer that question. The MIE's job is to translate vague wants into focused, actionable information needs.</div>
+      </div>
+
+      <!-- CASE STUDY -->
+      <div class="case-box">
+        <div class="case-tag">Case Study</div>
+        <div class="case-title">Nestlé Malaysia — From Data to Insight</div>
+        <div class="case-body">Nestlé Malaysia noticed through its sales data that Milo sales dipped every year in January and February. The raw data showed the drop clearly. The marketing team commissioned further research and discovered through consumer interviews that many Malaysian families reduced their Milo purchases after the school holidays ended, associating the drink strongly with "morning school routines." During school breaks, consumption habits shifted. Armed with this insight, Nestlé launched a "Milo for the Weekend" campaign targeting recreational sports and family activities during holiday periods — successfully flattening the seasonal dip.</div>
+
+        <div class="case-question">Q1. In this scenario, the sales data showing a January dip is best described as:</div>
+        <div class="case-opts" id="c1q1-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c1q1','A')"><span class="cletter">A</span>A customer insight that immediately tells Nestlé what action to take</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c1q1','B')"><span class="cletter">B</span>Raw data that points to a problem but does not explain why it is happening</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c1q1','C')"><span class="cletter">C</span>Competitive marketing intelligence gathered from Nestlé's competitors</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c1q1','D')"><span class="cletter">D</span>A complete output of the Marketing Information Ecosystem</div>
+        </div>
+        <div class="case-feedback" id="c1q1-fb"></div>
+
+        <div class="case-question" style="margin-top:14px">Q2. The discovery that families associate Milo with "morning school routines" — obtained through consumer interviews — is best described as:</div>
+        <div class="case-opts" id="c1q2-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c1q2','A')"><span class="cletter">A</span>Secondary data from a government report</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c1q2','B')"><span class="cletter">B</span>Big data generated by digital platforms</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c1q2','C')"><span class="cletter">C</span>A customer insight derived from primary marketing research</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c1q2','D')"><span class="cletter">D</span>Competitive intelligence gathered from Horlicks and Ovaltine</div>
+        </div>
+        <div class="case-feedback" id="c1q2-fb"></div>
+      </div>
+
+      <div class="sec-score-bar"><span class="ssb-label">Section 1 score</span><span class="ssb-val" id="ss-1">—</span></div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" onclick="goTo(0)">← Previous</button>
+        <button class="btn-nav primary" onclick="goTo(2)">Next section →</button>
+      </div>
+    </div>
+
+    <!-- SEC 2: SOURCES OF INFORMATION -->
+    <div class="section" id="sec-2">
+      <div class="sec-num">Section 2 of 6</div>
+      <div class="sec-title">Three Sources of <span>Marketing Information</span></div>
+      <div class="sec-lead">Before spending money on formal research, companies draw on two cheaper sources first.</div>
+
+      <div class="block-label">Source 1 — Internal Databases</div>
+      <p class="body-text">An <span class="strong">internal database</span> is an electronic collection of consumer and market information obtained from sources within the company network. This includes sales records, purchase histories, customer contact data, inventory levels, previous research reports, and service interaction logs.</p>
+      <p class="body-text">Internal databases are fast and inexpensive — the data already exists. Modern CRM systems make it easy to query this data in seconds. However, internal data has limits: it ages quickly, it only shows what is happening inside the company, and it cannot tell you what competitors are doing or why customers are behaving a certain way.</p>
+      <div class="ebox"><div class="etag">Example</div><div class="etext">Maybank analyses its internal database to identify customers who have recently taken a home loan and proactively offers them home insurance and renovation financing — without running any new research. The data was already there; it just needed to be acted on.</div></div>
+
+      <div class="divider"></div>
+      <div class="block-label">Source 2 — Competitive Marketing Intelligence</div>
+      <p class="body-text"><span class="strong">Competitive marketing intelligence</span> is the systematic collection and analysis of publicly available information about consumers, competitors, and developments in the marketing environment. It helps companies monitor market shifts before they become crises.</p>
+      <p class="body-text">Sources include competitor websites and social media, industry reports, trade publications, customer feedback on review platforms, job postings (which reveal competitor strategy), and conversations with customers and suppliers.</p>
+      <div class="hbox"><strong>Important:</strong> Competitive intelligence uses only <em>publicly available</em> information. Obtaining competitor information through deception, hacking, or industrial espionage is both unethical and illegal. The line between smart intelligence and corporate espionage must never be crossed.</div>
+      <div class="ebox"><div class="etag">Malaysian Example</div><div class="etext">When Tealive's marketing team noticed through social listening that searches for "low-sugar boba" and "healthier bubble tea" were spiking on Google Trends Malaysia, they treated this as competitive intelligence — a signal of a market shift — and launched a reduced-sugar product line months before competitors did.</div></div>
+
+      <div class="divider"></div>
+      <div class="block-label">Source 3 — Marketing Research</div>
+      <p class="body-text"><span class="strong">Marketing research</span> is the systematic design, collection, analysis, and reporting of data relevant to a specific marketing situation facing an organisation. Unlike the other two sources, research is commissioned specifically to answer a question that existing data cannot answer.</p>
+      <p class="body-text">Marketing research is more expensive and time-consuming than the other two sources — which is why companies use internal data and intelligence first. Research is reserved for decisions important enough to justify the investment.</p>
+
+      <!-- REFLECT -->
+      <div class="reflect-box">
+        <div class="reflect-label">💭 Think about this</div>
+        <div class="reflect-q">KFC Malaysia wants to know whether to add a plant-based burger to its menu. Which source(s) of marketing information should they use first, and which would they use if those are insufficient?</div>
+        <div class="reflect-hint">Think about what each source can and cannot answer. What does internal data tell them? What does intelligence tell them? What question would only formal research answer?</div>
+        <button class="reflect-reveal-btn" onclick="revealReflect(this)">Reveal suggested answer</button>
+        <div class="reflect-answer"><strong>Step 1 — Internal database:</strong> KFC checks past sales of any existing veggie or lighter options they have offered. Did any previous attempts sell well? Which outlets? Which customer segments bought them?<br><br><strong>Step 2 — Competitive intelligence:</strong> They monitor McDonald's McVeggie performance in Malaysia and India, track social media sentiment around plant-based food among Malaysian consumers, and read food industry reports on the plant-based trend.<br><br><strong>Step 3 — Marketing research:</strong> If internal data and intelligence still don't answer "will Malaysian customers pay RM14.90 for a plant-based KFC burger?", they commission consumer surveys and taste tests to get a definitive answer before committing to a product launch.</div>
+      </div>
+
+      <!-- CASE STUDY -->
+      <div class="case-box">
+        <div class="case-tag">Case Study</div>
+        <div class="case-title">Grab Malaysia — Three Sources in Action</div>
+        <div class="case-body">Grab Malaysia's marketing team is considering launching a new subscription plan called "Grab Unlimited" that bundles food delivery, rides, and GrabMart groceries for a fixed monthly fee. Before making a RM2 million investment in the product launch, the team works through its information sources systematically. First, it reviews internal data showing that 18% of users already use all three services regularly. Second, it monitors Gojek's "GoClub" subscription launch in Indonesia and tracks Malaysian consumer sentiment about subscriptions on Twitter and Reddit. Third, because neither source fully answers "how much would Malaysian users pay?", the team runs a 2,000-respondent online survey.</div>
+
+        <div class="case-question">Q1. The finding that "18% of users already use all three services regularly" is an example of:</div>
+        <div class="case-opts" id="c2q1-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c2q1','A')"><span class="cletter">A</span>Primary research collected through a consumer survey</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c2q1','B')"><span class="cletter">B</span>Competitive marketing intelligence from public sources</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c2q1','C')"><span class="cletter">C</span>Internal database information from within the company</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c2q1','D')"><span class="cletter">D</span>Secondary data from a government report</div>
+        </div>
+        <div class="case-feedback" id="c2q1-fb"></div>
+
+        <div class="case-question" style="margin-top:14px">Q2. Why did Grab still commission a formal survey even after using internal data and competitive intelligence?</div>
+        <div class="case-opts" id="c2q2-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c2q2','A')"><span class="cletter">A</span>Because surveys are always more reliable than internal data</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c2q2','B')"><span class="cletter">B</span>Because neither existing source could answer the specific pricing question that determined product viability</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c2q2','C')"><span class="cletter">C</span>Because competitive intelligence is only useful for large companies</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c2q2','D')"><span class="cletter">D</span>Because internal data is always outdated and unreliable</div>
+        </div>
+        <div class="case-feedback" id="c2q2-fb"></div>
+      </div>
+
+      <div class="sec-score-bar"><span class="ssb-label">Section 2 score</span><span class="ssb-val" id="ss-2">—</span></div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" onclick="goTo(1)">← Previous</button>
+        <button class="btn-nav primary" onclick="goTo(3)">Next section →</button>
+      </div>
+    </div>
+
+    <!-- SEC 3: RESEARCH PROCESS -->
+    <div class="section" id="sec-3">
+      <div class="sec-num">Section 3 of 6</div>
+      <div class="sec-title">The Marketing <span>Research Process</span></div>
+      <div class="sec-lead">Marketing research follows four steps. The first step is the most critical — and the most often done badly.</div>
+
+      <div class="steps">
+        <div class="step"><div class="snum">1</div><div><div class="stitle">Define the problem and research objectives</div><div class="sdesc">This is the hardest and most important step. A poorly defined problem produces useless research no matter how well executed. Research objectives can be exploratory (gather preliminary information to define the problem further), descriptive (describe a market or customer behaviour), or causal (test cause-and-effect relationships).</div></div></div>
+        <div class="step"><div class="snum">2</div><div><div class="stitle">Develop the research plan</div><div class="sdesc">Choose data sources (primary or secondary), research approaches (observation, surveys, experiments, ethnography), contact methods (online, phone, in-person), sampling plan, and research instruments (questionnaires, mechanical devices like eye-trackers).</div></div></div>
+        <div class="step"><div class="snum">3</div><div><div class="stitle">Implement the research plan</div><div class="sdesc">Collect, process, and clean the data. This stage is most prone to error — biased questions, unrepresentative samples, recording mistakes, and interviewer influence can all distort results.</div></div></div>
+        <div class="step"><div class="snum">4</div><div><div class="stitle">Interpret and report findings</div><div class="sdesc">Analyse the data and translate findings into marketing recommendations. Researchers should present only conclusions supported by the data, and managers should not look only for findings that confirm what they already believe (confirmation bias).</div></div></div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="block-label">Primary vs Secondary Data</div>
+      <table class="ctable">
+        <tr><th>Type</th><th>Definition</th><th>Examples</th><th>Trade-off</th></tr>
+        <tr><td><span class="tprimary">Primary</span></td><td>Original data collected for this specific research purpose</td><td>Surveys, focus groups, in-depth interviews, observation, experiments, ethnography</td><td>Highly relevant — but expensive, time-consuming</td></tr>
+        <tr><td><span class="tsecondary">Secondary</span></td><td>Data already collected for another purpose</td><td>DOSM reports, industry publications, company records, Nielsen data, academic journals</td><td>Cheaper and faster — but may not fit the specific problem perfectly</td></tr>
+      </table>
+      <div class="hbox"><strong>Rule of thumb:</strong> Always check secondary data first. If it answers the question adequately, there is no need to spend time and money on primary research. Only commission primary research when secondary data is insufficient, outdated, or unavailable.</div>
+
+      <div class="divider"></div>
+      <div class="block-label">Research Approaches for Primary Data</div>
+      <div class="card-grid">
+        <div class="ccard"><div class="cicon">👁️</div><div class="ctitle">Observational</div><div class="cbody">Watch consumers in their natural setting without intervening. Best for understanding actual behaviour (not what people say they do).</div></div>
+        <div class="ccard"><div class="cicon">🏠</div><div class="ctitle">Ethnographic</div><div class="cbody">Researchers immerse themselves in consumers' lives. Deep qualitative insight — expensive and time-consuming but reveals what surveys cannot.</div></div>
+        <div class="ccard"><div class="cicon">📊</div><div class="ctitle">Survey</div><div class="cbody">Most widely used. Good for measuring knowledge, attitudes, preferences, and behaviours across large samples. Susceptible to biased questions.</div></div>
+        <div class="ccard"><div class="cicon">🧪</div><div class="ctitle">Experimental</div><div class="cbody">Tests cause-and-effect. One group exposed to something, another is not. Best for causal research objectives.</div></div>
+      </div>
+
+      <!-- REFLECT -->
+      <div class="reflect-box">
+        <div class="reflect-label">💭 Think about this</div>
+        <div class="reflect-q">A researcher writes this survey question: "Don't you agree that Milo is the most energising drink for Malaysian students?" What is wrong with this question and how would you fix it?</div>
+        <div class="reflect-hint">Think about what a good survey question should be. What makes this question biased? How does the wording influence how people answer?</div>
+        <button class="reflect-reveal-btn" onclick="revealReflect(this)">Reveal suggested answer</button>
+        <div class="reflect-answer">This is a <strong>leading question</strong> — it pushes respondents toward agreeing because of the phrase "Don't you agree." It also contains an assumption ("most energising") that the respondent has not yet confirmed. A better version: <em>"How would you rate Milo compared to other energy drinks you consume? (Very poor / Poor / Average / Good / Excellent)"</em> or <em>"Which of the following drinks do you consider most energising? (List of options)"</em> — neutral wording that lets respondents answer freely without being steered.</div>
+      </div>
+
+      <!-- CASE STUDY -->
+      <div class="case-box">
+        <div class="case-tag">Case Study</div>
+        <div class="case-title">Aeon Malaysia — Researching a New Store Format</div>
+        <div class="case-body">Aeon Malaysia is considering opening smaller "Aeon Mini" convenience stores near university campuses. Before committing, the research team defines their objective clearly: "Understand whether students aged 18–24 near Sunway and Subang Jaya would shop at a smaller Aeon format, and what product categories they would expect to find." They first check government census data and DOSM retail statistics (secondary data). Finding these insufficient, they run 400 in-person intercept surveys near campus, six focus groups with students, and spend two afternoons observing shopping patterns at a nearby FamilyMart (observational research).</div>
+
+        <div class="case-question">Q1. The use of DOSM retail statistics and government census data by Aeon's research team is an example of:</div>
+        <div class="case-opts" id="c3q1-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c3q1','A')"><span class="cletter">A</span>Primary research — because it involves real market data</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c3q1','B')"><span class="cletter">B</span>Secondary research — because the data was collected for purposes other than Aeon's specific problem</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c3q1','C')"><span class="cletter">C</span>Causal research — because it tests a cause-and-effect relationship</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c3q1','D')"><span class="cletter">D</span>Internal database research — because it comes from within the company</div>
+        </div>
+        <div class="case-feedback" id="c3q1-fb"></div>
+
+        <div class="case-question" style="margin-top:14px">Q2. Aeon's researchers spending two afternoons observing shopping patterns at a nearby FamilyMart is an example of which research approach?</div>
+        <div class="case-opts" id="c3q2-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c3q2','A')"><span class="cletter">A</span>Survey research</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c3q2','B')"><span class="cletter">B</span>Experimental research</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c3q2','C')"><span class="cletter">C</span>Observational research</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c3q2','D')"><span class="cletter">D</span>Ethnographic research</div>
+        </div>
+        <div class="case-feedback" id="c3q2-fb"></div>
+      </div>
+
+      <div class="sec-score-bar"><span class="ssb-label">Section 3 score</span><span class="ssb-val" id="ss-3">—</span></div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" onclick="goTo(2)">← Previous</button>
+        <button class="btn-nav primary" onclick="goTo(4)">Next section →</button>
+      </div>
+    </div>
+
+    <!-- SEC 4: BIG DATA & ANALYTICS -->
+    <div class="section" id="sec-4">
+      <div class="sec-num">Section 4 of 6</div>
+      <div class="sec-title">Big Data, CRM &<span> Marketing Analytics</span></div>
+      <div class="sec-lead">The digital age creates enormous volumes of data. The question is no longer "how do we get more data?" but "how do we make sense of it?"</div>
+
+      <div class="block-label">What is Big Data?</div>
+      <p class="body-text"><span class="strong">Big data</span> refers to the huge and complex data sets generated by today's digital information systems — every click, search, purchase, GPS ping, social media post, and sensor reading adds to it. The volume, speed, and variety of this data is beyond what traditional tools can handle.</p>
+      <div class="hbox"><strong>The big data challenge</strong> is not accessing data — it is <em>sifting through</em> it to find what is meaningful. Most companies collect far more data than they can ever use. The skill is knowing what to look for and having the tools and talent to find it.</div>
+      <div class="ebox"><div class="etag">Scale Example</div><div class="etext">Every day, Shopee Malaysia processes millions of product views, searches, cart additions, purchases, and returns. Individually, each event is meaningless. Together, they reveal patterns — which products trend in which cities, which ad formats drive Gen Z conversion, which price points cause basket abandonment. That pattern recognition is what turns big data into competitive advantage.</div></div>
+
+      <div class="divider"></div>
+      <div class="block-label">Customer Relationship Management (CRM)</div>
+      <p class="body-text"><span class="strong">CRM</span> involves managing detailed information about individual customers and carefully managing customer touchpoints to maximise loyalty. It captures every interaction a customer has with a brand — purchase, complaint, enquiry, reward redemption — and uses that history to make the next interaction more relevant and valuable.</p>
+      <div class="card-grid">
+        <div class="ccard"><div class="cicon">🎯</div><div class="ctitle">Personalisation</div><div class="cbody">Using individual customer history to make offers, messages, and experiences uniquely relevant to each person.</div></div>
+        <div class="ccard"><div class="cicon">🔁</div><div class="ctitle">Retention</div><div class="cbody">Identifying at-risk customers before they leave — through declining purchase frequency — and triggering win-back offers at the right moment.</div></div>
+        <div class="ccard"><div class="cicon">💰</div><div class="ctitle">Lifetime value</div><div class="cbody">Understanding which customers generate the most value over time and investing disproportionately in those relationships.</div></div>
+      </div>
+      <div class="ebox"><div class="etag">Malaysian Example</div><div class="etext">Starbucks Malaysia's My Starbucks Rewards is a CRM system. A Gold member who orders Caramel Frappuccinos four times a week receives a birthday reward for exactly that drink — not a generic discount. The CRM knows her name, her favourite drink, her visit frequency, and her most-used outlet. That level of personalisation builds a relationship that is very hard for a competitor to replicate.</div></div>
+
+      <div class="divider"></div>
+      <div class="block-label">Marketing Analytics & Artificial Intelligence</div>
+      <p class="body-text"><span class="strong">Marketing analytics</span> consists of the tools, technologies, and processes that marketers use to dig meaningful patterns out of big data — to gauge performance, understand customers, and improve decisions. Data mining, predictive modelling, and A/B testing are all forms of marketing analytics.</p>
+      <p class="body-text"><span class="strong">Artificial intelligence (AI)</span> is now being used to automate pattern recognition in data at a scale no human analyst could match. AI can predict which customers are likely to churn, which products to recommend, and which ad to show each individual user in real time. However, Kotler & Armstrong note that AI in marketing is still in early stages — human judgement remains essential for interpreting outputs and making strategic decisions.</p>
+      <div class="wbox">⚠️ <strong>Important distinction:</strong> AI can <em>find</em> patterns in data. It cannot tell you <em>why</em> those patterns exist or whether acting on them is ethically appropriate. A human marketer must still ask: is this finding meaningful? Is this action right?</div>
+
+      <!-- REFLECT -->
+      <div class="reflect-box">
+        <div class="reflect-label">💭 Think about this</div>
+        <div class="reflect-q">An AI system at a Malaysian e-commerce company identifies that customers who buy baby products also tend to buy prenatal vitamins within 3 months — before any baby-related purchase. The company wants to use this pattern to target these customers with baby product ads. What are the opportunities AND the risks of acting on this AI insight?</div>
+        <div class="reflect-hint">Think about both the marketing opportunity (timing, relevance) and the ethical/privacy risks (assumptions, sensitivity, consumer consent).</div>
+        <button class="reflect-reveal-btn" onclick="revealReflect(this)">Reveal suggested answer</button>
+        <div class="reflect-answer"><strong>Opportunity:</strong> If the pattern is reliable, the company can reach potential parents with relevant offers before they have even started actively searching — a huge competitive advantage in timing and relevance.<br><br><strong>Risks:</strong> (1) <em>Assumption error</em> — not every prenatal vitamin buyer is pregnant; some buy for health reasons. Targeting them with baby ads could be confusing or offensive. (2) <em>Privacy sensitivity</em> — pregnancy is deeply personal information. Using purchase data to infer it without explicit consent may violate trust and Malaysia's PDPA. (3) <em>Discrimination risk</em> — if the pattern is used to exclude or disadvantage customers in some way, it becomes discriminatory. The insight is valuable; how it is used determines whether it is ethical.</div>
+      </div>
+
+      <!-- CASE STUDY -->
+      <div class="case-box">
+        <div class="case-tag">Case Study</div>
+        <div class="case-title">Watsons Malaysia — CRM and Analytics</div>
+        <div class="case-body">Watsons Malaysia's Watsons Card loyalty programme has over 8 million members. The analytics team segments members into "health-focused," "beauty-focused," and "value-seeking" clusters based on purchase history. A health-focused member who has not purchased in 45 days receives an automated push notification offering 20% off their most-purchased supplement brand. A beauty-focused member who just bought foundation receives a recommendation for a matching primer — timed to arrive 3 days after their purchase, when they would likely be using the foundation for the first time. All of this runs automatically, triggered by CRM rules built on analytics insights.</div>
+
+        <div class="case-question">Q1. Watsons segmenting its 8 million members into clusters based on purchase history is an example of:</div>
+        <div class="case-opts" id="c4q1-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c4q1','A')"><span class="cletter">A</span>Competitive marketing intelligence</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c4q1','B')"><span class="cletter">B</span>Marketing analytics applied to big data from a CRM system</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c4q1','C')"><span class="cletter">C</span>Observational research conducted in-store</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c4q1','D')"><span class="cletter">D</span>Secondary data analysis from government sources</div>
+        </div>
+        <div class="case-feedback" id="c4q1-fb"></div>
+
+        <div class="case-question" style="margin-top:14px">Q2. The automated re-engagement message sent to members who have not purchased in 45 days is primarily aimed at which CRM objective?</div>
+        <div class="case-opts" id="c4q2-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c4q2','A')"><span class="cletter">A</span>Increasing big data volume</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c4q2','B')"><span class="cletter">B</span>Customer retention — preventing at-risk customers from lapsing</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c4q2','C')"><span class="cletter">C</span>Conducting exploratory marketing research</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c4q2','D')"><span class="cletter">D</span>Collecting primary data through surveys</div>
+        </div>
+        <div class="case-feedback" id="c4q2-fb"></div>
+      </div>
+
+      <div class="sec-score-bar"><span class="ssb-label">Section 4 score</span><span class="ssb-val" id="ss-4">—</span></div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" onclick="goTo(3)">← Previous</button>
+        <button class="btn-nav primary" onclick="goTo(5)">Next section →</button>
+      </div>
+    </div>
+
+    <!-- SEC 5: ETHICS & PRIVACY -->
+    <div class="section" id="sec-5">
+      <div class="sec-num">Section 5 of 6</div>
+      <div class="sec-title">Ethics & Privacy in <span>Marketing Research</span></div>
+      <div class="sec-lead">With the power to collect vast amounts of consumer data comes a serious responsibility to use it ethically.</div>
+
+      <div class="block-label">Why ethics matters in marketing research</div>
+      <p class="body-text">Most marketing research creates genuine value for both companies and consumers — companies make better products, consumers get things they actually want. But the growing sophistication of data collection raises real ethical questions about the limits of what companies should do, even when it is technically legal or commercially beneficial.</p>
+      <div class="card-grid">
+        <div class="ccard"><div class="cicon">🔒</div><div class="ctitle">Consumer privacy</div><div class="cbody">Consumers often do not know what personal data is being collected, stored, shared, or sold. The right to privacy must be actively respected, not just technically complied with.</div></div>
+        <div class="ccard"><div class="cicon">🎭</div><div class="ctitle">Sugging</div><div class="cbody">Selling under the guise of research — contacting consumers claiming to conduct a survey but actually using it to pitch products. This is unethical and illegal in many countries.</div></div>
+        <div class="ccard"><div class="cicon">👶</div><div class="ctitle">Vulnerable groups</div><div class="cbody">Children, the elderly, and lower-income groups require extra protection. Research targeting these groups must ensure they fully understand what they are participating in.</div></div>
+        <div class="ccard"><div class="cicon">🌐</div><div class="ctitle">Cross-border data</div><div class="cbody">Different countries have different data protection laws. A practice legal in one jurisdiction may be illegal in another — companies operating internationally must navigate these differences carefully.</div></div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="block-label">The Value Exchange Principle</div>
+      <p class="body-text">The most sustainable ethical approach is a genuine <span class="strong">value exchange</span>: consumers willingly share their data in return for personalised value, convenience, or reward. When consumers understand clearly what data is collected, how it is used, and what they get in return, trust is built. When data is collected covertly or used in ways consumers did not expect, trust is destroyed — sometimes permanently.</p>
+      <div class="hbox"><strong>Kotler & Armstrong's principle:</strong> Companies that collect consumer data should do so with consumer knowledge and consent. They should provide value in exchange and allow consumers to opt out. Responsible data use is not just ethical — it is increasingly a legal requirement and a competitive differentiator.</div>
+
+      <div class="divider"></div>
+      <div class="block-label">Malaysia's Personal Data Protection Act (PDPA) 2010</div>
+      <p class="body-text">The PDPA 2010 is Malaysia's primary legislation governing how organisations collect, use, store, and share personal data. It requires companies to obtain consent before collecting personal data, use data only for the purpose it was collected, keep data secure, and allow individuals to access and correct their own data.</p>
+      <div class="wbox">⚠️ <strong>Real consequence:</strong> Companies that violate PDPA face fines of up to RM500,000 and/or imprisonment of up to three years for responsible officers. As digital marketing grows in Malaysia, PDPA compliance is not optional — it is a legal obligation every marketing professional must understand.</div>
+      <div class="ebox"><div class="etag">Example</div><div class="etext">If a Malaysian e-commerce company collects customer email addresses during a purchase and later uses those emails to sign customers up for a third-party marketing list without their consent — that is a PDPA violation. The fact that the customer's data was already in the company's system does not give permission to use it for unrelated purposes.</div></div>
+
+      <!-- REFLECT -->
+      <div class="reflect-box">
+        <div class="reflect-label">💭 Think about this</div>
+        <div class="reflect-q">A Malaysian fintech company wants to use its customers' banking transaction data to build psychographic profiles and sell those profiles to insurance companies for targeted marketing. The data was collected with a very broad consent clause buried in the 40-page terms and conditions. Is this ethical? Is it legal under PDPA?</div>
+        <div class="reflect-hint">Separate the ethical question from the legal one. Think about what meaningful consent looks like versus what "technically obtained" consent looks like.</div>
+        <button class="reflect-reveal-btn" onclick="revealReflect(this)">Reveal suggested answer</button>
+        <div class="reflect-answer"><strong>Ethically:</strong> This is highly problematic. Burying consent in 40 pages of terms is not meaningful consent — it is consent obtained through obscurity. Customers had no practical ability to understand or evaluate what they were agreeing to. Using their financial data to build and sell psychographic profiles for insurance marketing is a significant extension beyond what a reasonable customer would expect from a banking relationship. The value exchange is entirely one-sided.<br><br><strong>Legally (PDPA):</strong> PDPA requires that consent be informed and obtained for specific, stated purposes. Using data for a purpose (selling to insurers) not clearly stated at the point of collection is almost certainly a violation — even if a broad clause was buried in the T&Cs. The PDPA's standard is not just technical compliance but whether the consumer genuinely understood what they were consenting to.</div>
+      </div>
+
+      <!-- CASE STUDY -->
+      <div class="case-box">
+        <div class="case-tag">Case Study</div>
+        <div class="case-title">TM (Telekom Malaysia) — Data Responsibility</div>
+        <div class="case-body">TM collects enormous amounts of data on its broadband customers — browsing patterns, usage times, device types, and location data from routers. A data analyst proposes using this data to infer customers' income brackets and political leanings (based on sites visited), and then selling segmented audience lists to political parties and advertisers ahead of a general election. The data was technically collected under a broad ToS consent clause, and no Malaysian law explicitly prohibits this specific use. The CMO must decide whether to proceed.</div>
+
+        <div class="case-question">Q1. Which ethical concern most directly applies to the analyst's proposal?</div>
+        <div class="case-opts" id="c5q1-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c5q1','A')"><span class="cletter">A</span>Sugging — because TM is pretending to offer broadband while actually gathering political data</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c5q1','B')"><span class="cletter">B</span>Consumer privacy and misuse of data for a purpose far beyond what customers reasonably consented to</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c5q1','C')"><span class="cletter">C</span>Secondary data bias — the browsing data is not representative of all Malaysians</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c5q1','D')"><span class="cletter">D</span>Sampling error — TM's customer base does not represent all Malaysian voters</div>
+        </div>
+        <div class="case-feedback" id="c5q1-fb"></div>
+
+        <div class="case-question" style="margin-top:14px">Q2. The CMO decides not to proceed, citing the value exchange principle. Which of the following best explains this decision?</div>
+        <div class="case-opts" id="c5q2-opts">
+          <div class="case-opt" onclick="caseAnswer(this,'c5q2','A')"><span class="cletter">A</span>The revenue from selling audience lists is too small to justify the project</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c5q2','B')"><span class="cletter">B</span>Customers shared their data to receive broadband service — not to have their political views inferred and sold. Using data this way violates the trust and consent that underpins the customer relationship.</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c5q2','C')"><span class="cletter">C</span>Political advertising is not permitted under Malaysian law</div>
+          <div class="case-opt" onclick="caseAnswer(this,'c5q2','D')"><span class="cletter">D</span>TM's internal database is too small to generate reliable political profiles</div>
+        </div>
+        <div class="case-feedback" id="c5q2-fb"></div>
+      </div>
+
+      <div class="sec-score-bar"><span class="ssb-label">Section 5 score</span><span class="ssb-val" id="ss-5">—</span></div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" onclick="goTo(4)">← Previous</button>
+        <button class="btn-nav primary" onclick="goTo(6)">Final quiz & summary →</button>
+      </div>
+    </div>
+
+    <!-- SEC 6: FINAL QUIZ & SUMMARY -->
+    <div class="section" id="sec-6">
+      <div class="sec-num">Final Section</div>
+      <div class="sec-title">Final Quiz &<span> Chapter Summary</span></div>
+      <div class="sec-lead">10 application-level questions covering all five sections. Read each scenario carefully before answering.</div>
+
+      <div class="fquiz-card" id="fquiz-card">
+        <div class="fq-header">
+          <div class="fq-title">Final Quiz</div>
+          <div class="fq-prog" id="fq-prog">Question 1 of 10</div>
+        </div>
+        <div class="fq-topic" id="fq-topic"></div>
+        <div class="fq-question" id="fq-question"></div>
+        <div class="fq-opts" id="fq-opts"></div>
+        <div class="fq-feedback" id="fq-feedback"></div>
+        <button class="fq-next" id="fq-next" onclick="fqNext()">Next question →</button>
+      </div>
+
+      <div id="fquiz-results" style="display:none">
+        <div class="results-wrap">
+          <div class="ring-wrap">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#EEF1F3" stroke-width="9"/>
+              <circle id="ring-arc" cx="60" cy="60" r="50" fill="none" stroke="#007B6E" stroke-width="9" stroke-linecap="round" stroke-dasharray="314.2" stroke-dashoffset="314.2" style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+            </svg>
+            <div class="ring-inner">
+              <div class="ring-score" id="final-score-val">0</div>
+              <div class="ring-of">/ 10</div>
+            </div>
+          </div>
+          <div class="results-title" id="res-title"></div>
+          <div class="results-sub" id="res-sub"></div>
+          <div class="breakdown">
+            <div class="bdtile"><div class="bdval" id="bd-c">0</div><div class="bdlbl">Correct</div></div>
+            <div class="bdtile"><div class="bdval" id="bd-w">0</div><div class="bdlbl">Wrong</div></div>
+            <div class="bdtile"><div class="bdval" id="bd-p">0%</div><div class="bdlbl">Score</div></div>
+          </div>
+          <div class="review-list">
+            <div class="review-heading">Question review</div>
+            <div id="review-rows"></div>
+          </div>
+          <button class="btn-replay" onclick="restartFQ()">↺ &nbsp;Retry quiz</button>
+        </div>
+
+        <div class="divider"></div>
+        <div class="block-label">Chapter 4 — Key concepts at a glance</div>
+        <div class="steps" style="margin-top:10px">
+          <div class="step"><div class="snum" style="background:#1D9E75">1</div><div><div class="stitle">Customer Insights & MIE</div><div class="sdesc">Data ≠ insight. A Marketing Information Ecosystem turns raw data into actionable understanding. It balances what managers want, need, and can affordably get.</div></div></div>
+          <div class="step"><div class="snum" style="background:#185FA5">2</div><div><div class="stitle">Three information sources</div><div class="sdesc">Internal databases (fast, cheap, limited scope) → Competitive intelligence (proactive, public sources) → Marketing research (specific, systematic, commissioned). Use in this order.</div></div></div>
+          <div class="step"><div class="snum" style="background:#534AB7">3</div><div><div class="stitle">4-step research process</div><div class="sdesc">Define the problem → Develop the plan → Implement → Interpret. Step 1 is the hardest and most critical. Primary data is original; secondary data already exists — check secondary first.</div></div></div>
+          <div class="step"><div class="snum" style="background:#854F0B">4</div><div><div class="stitle">Big data, CRM & analytics</div><div class="sdesc">Big data is overwhelming — the skill is finding meaning. CRM manages individual customer relationships to maximise loyalty. Analytics and AI find patterns but need human interpretation.</div></div></div>
+          <div class="step"><div class="snum" style="background:#993C1D">5</div><div><div class="stitle">Ethics & privacy</div><div class="sdesc">Respect consumer privacy. Avoid sugging. Maintain a genuine value exchange. Malaysia's PDPA 2010 is the legal framework — non-compliance carries real penalties.</div></div></div>
+        </div>
+        <div class="hbox" style="margin-top:20px;font-size:14px;padding:16px 18px"><strong>One-sentence summary:</strong> To create customer value, companies must build a system that turns data from internal records, competitive intelligence, and research into sharp customer insights — while managing big data responsibly and respecting consumer privacy.</div>
+      </div>
+
+      <div class="bottom-nav">
+        <button class="btn-nav" onclick="goTo(5)">← Previous</button>
+        <button class="btn-nav primary" disabled>Module complete 🎉</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── NAVIGATION ──
+let curSec = 0;
+function goTo(n) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + n).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach((el, i) => {
+    el.classList.remove('active');
+    if (i < n) el.classList.add('done'); else el.classList.remove('done');
+    if (i === n) el.classList.add('active');
+  });
+  const pct = Math.round(((n) / 6) * 100) + 14;
+  document.getElementById('prog-fill').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('prog-text').textContent = 'Section ' + (n + 1) + ' of 7';
+  curSec = n;
+  window.scrollTo(0, 0);
+}
+
+// ── REFLECT ──
+function revealReflect(btn) {
+  const ans = btn.nextElementSibling;
+  ans.classList.add('show');
+  btn.style.display = 'none';
+}
+
+// ── CASE ANSWERS ──
+const caseData = {
+  c1q1: { ans:'B', correct:'Raw data is a signal that something is wrong — it shows the dip but not the reason. It becomes a customer insight only after further research reveals the underlying cause.', wrong:'Not quite. Raw sales data shows a problem but does not explain it. It becomes an insight only after research uncovers the "why." The answer is B.' },
+  c1q2: { ans:'C', correct:'Correct. The discovery came from consumer interviews (primary research) and represents a fresh, actionable understanding of customer behaviour — that is the definition of a customer insight.', wrong:'Not quite. Consumer interviews are primary research, and the understanding of customer behaviour they produced is a customer insight. The answer is C.' },
+  c2q1: { ans:'C', correct:'Correct. Data on how Grab\'s own users behave comes from within the company — that is an internal database. It is the first and cheapest source to check.', wrong:'Not quite. Usage patterns of Grab\'s own customers come from within the company\'s own data systems — that is an internal database. The answer is C.' },
+  c2q2: { ans:'B', correct:'Correct. Neither internal data (what current users do) nor competitive intelligence (what Gojek did) could answer the specific question of Malaysian pricing willingness. That required purpose-built primary research.', wrong:'Not quite. The survey was needed because neither existing source could answer the specific question about Malaysian consumers\' willingness to pay at a specific price point. The answer is B.' },
+  c3q1: { ans:'B', correct:'Correct. Government census data and DOSM statistics were collected for national purposes, not for Aeon\'s specific store format question — that makes them secondary data.', wrong:'Not quite. DOSM reports and government census data were collected for other purposes (national statistics), not for Aeon\'s specific research question. That makes them secondary data. The answer is B.' },
+  c3q2: { ans:'C', correct:'Correct. Watching shopping patterns at FamilyMart without intervening or asking questions is observational research — understanding what consumers actually do in their natural environment.', wrong:'Not quite. Watching people shop without asking questions or intervening is observational research. Ethnographic research would involve deep immersion over time. The answer is C.' },
+  c4q1: { ans:'B', correct:'Correct. Using analytical tools to find patterns in large customer datasets from a loyalty programme is exactly what marketing analytics applied to CRM big data does.', wrong:'Not quite. Segmenting millions of customers by purchase behaviour using analytical tools — applied to CRM data — is marketing analytics applied to big data. The answer is B.' },
+  c4q2: { ans:'B', correct:'Correct. Targeting customers who have not purchased in 45 days with a re-engagement offer is a classic CRM retention strategy — preventing at-risk customers from lapsing entirely.', wrong:'Not quite. The 45-day trigger and re-engagement offer is designed to retain customers who might otherwise stop purchasing — that is CRM retention. The answer is B.' },
+  c5q1: { ans:'B', correct:'Correct. The core ethical violation is using consumer data for a purpose — political profiling and selling audience lists — that customers could not reasonably have anticipated or consented to when signing up for broadband.', wrong:'Not quite. The main issue is consumer privacy and data misuse — using information far beyond what customers understood they were consenting to. The answer is B.' },
+  c5q2: { ans:'B', correct:'Correct. The value exchange principle says: customers share data in return for a specific service or benefit. Using that data for something completely different — political profiling — breaks the original agreement and destroys trust.', wrong:'Not quite. The value exchange principle explains this decision: customers shared data to get broadband, not to have their political views sold. Using data beyond its consented purpose violates that exchange. The answer is B.' },
+};
+const sectionCaseMap = { 1:['c1q1','c1q2'], 2:['c2q1','c2q2'], 3:['c3q1','c3q2'], 4:['c4q1','c4q2'], 5:['c5q1','c5q2'] };
+const sectionScores = {};
+
+function caseAnswer(el, qid, choice) {
+  const opts = document.getElementById(qid + '-opts');
+  if (opts.classList.contains('answered')) return;
+  opts.classList.add('answered');
+  opts.querySelectorAll('.case-opt').forEach(o => o.classList.add('disabled'));
+  const d = caseData[qid];
+  const isCorrect = choice === d.ans;
+  opts.querySelectorAll('.case-opt').forEach(o => {
+    const l = o.querySelector('.cletter').textContent;
+    if (l === d.ans) o.classList.add('correct');
+    else if (l === choice && !isCorrect) o.classList.add('wrong');
+  });
+  const fb = document.getElementById(qid + '-fb');
+  fb.className = 'case-feedback show ' + (isCorrect ? 'cf-correct' : 'cf-wrong');
+  fb.textContent = (isCorrect ? '✓ ' : '✗ ') + (isCorrect ? d.correct : d.wrong);
+  // update section score
+  const secNum = Object.keys(sectionCaseMap).find(k => sectionCaseMap[k].includes(qid));
+  if (!sectionScores[secNum]) sectionScores[secNum] = { correct: 0, total: 0 };
+  sectionScores[secNum].total++;
+  if (isCorrect) sectionScores[secNum].correct++;
+  updateSectionScore(secNum);
+}
+
+function updateSectionScore(n) {
+  const s = sectionScores[n];
+  if (!s) return;
+  const el = document.getElementById('ss-' + n);
+  if (el) el.textContent = s.correct + '/' + s.total;
+  const ns = document.getElementById('ns-' + n);
+  if (ns) ns.textContent = s.correct + '/' + s.total;
+}
+
+// ── FINAL QUIZ ──
+const FQ = [
+  { topic:'Customer Insights & MIE', q:'A Malaysian cosmetics brand has access to 5 million rows of customer transaction data but still cannot answer why sales of its anti-ageing line dropped 20% last quarter. This best illustrates:', opts:['The failure of competitive intelligence','The difference between having data and having customer insights','The limitation of experimental research','Why secondary data is always insufficient'], ans:1, exp:'Having vast amounts of data does not automatically produce insight. Understanding why sales dropped requires analysis, interpretation, and likely additional primary research — turning data into actionable understanding is the core challenge the MIE exists to solve.' },
+  { topic:'Sources of Information', q:'Jollibee Malaysia\'s marketing team discovers through Google Trends that searches for "halal fried chicken" have doubled in Sabah over the past six months. They use this to plan a new outlet opening. This is best described as:', opts:['Internal database analysis','Primary survey research','Competitive marketing intelligence from a public source','Experimental research with a control group'], ans:2, exp:'Google Trends is a publicly available source that reveals consumer behaviour — using it to monitor market developments and guide decisions is competitive marketing intelligence. It is not internal data (it comes from outside the company) and it is not commissioned research.' },
+  { topic:'Marketing Research Process', q:'Padini wants to know whether changing its store layout increases purchase conversion rates. Which research objective and approach is most appropriate?', opts:['Exploratory objective; ethnographic research','Descriptive objective; survey research','Causal objective; experimental research — test new layout in some stores, keep old layout in others','Descriptive objective; secondary data analysis'], ans:2, exp:'Testing whether a change causes a specific outcome requires a causal research objective and experimental research design — one group (stores with new layout) is compared to a control group (stores with old layout). Surveys would capture opinions, not actual behaviour.' },
+  { topic:'Marketing Research Process', q:'A researcher surveys 1,000 Malaysians asking: "Don\'t you agree that Grab is more reliable than other ride-hailing apps?" The study finds 78% agree. Why should this finding be treated with caution?', opts:['The sample of 1,000 is too small for any conclusion','The question is a leading question that pushes respondents toward agreeing with Grab','Grab is a private company so primary research on it is prohibited','The finding is secondary data and should not be used for decisions'], ans:1, exp:'Leading questions bias results by steering respondents toward a particular answer. "Don\'t you agree..." signals to respondents that agreement is expected. A neutral question ("How would you rate Grab\'s reliability compared to other apps?") would produce more valid data.' },
+  { topic:'Primary vs Secondary Data', q:'Uniqlo Malaysia wants to understand how Malaysian consumers feel about sustainable fashion before launching a new eco-product line. Which approach represents the correct sequence?', opts:['Commission a RM500,000 nationwide survey immediately','Check existing industry reports and sustainability surveys first; only commission primary research if these are insufficient','Use only internal sales data — it is the cheapest and fastest option','Conduct ethnographic research with 10 consumers, then stop'], ans:1, exp:'The rule is to check secondary data first. Industry reports on sustainable fashion in Malaysia, existing consumer surveys, and academic research may already answer the question — at zero additional cost. Primary research should only be commissioned if secondary sources are insufficient or too outdated.' },
+  { topic:'Big Data & Analytics', q:'Lazada Malaysia\'s algorithm notices that customers who buy yoga mats also tend to buy protein powder within two weeks. The algorithm automatically shows protein powder ads to yoga mat buyers. This is an example of:', opts:['Competitive marketing intelligence','Ethnographic research','Marketing analytics applied to big data to generate personalised recommendations','Secondary data analysis from government sources'], ans:2, exp:'Identifying patterns in large datasets (yoga mat + protein powder co-purchase) and using those patterns to automatically personalise the customer experience is marketing analytics applied to big data — a core function of modern digital marketing.' },
+  { topic:'CRM', q:'A Gold member of Starbucks Malaysia who visits every weekday morning receives a personalised offer on a Monday with 2x stars on her usual order — timed specifically because she has not visited since Wednesday. This is an example of:', opts:['Competitive intelligence about other coffee chains','CRM using customer history to trigger a retention offer at the right moment','Experimental research testing a new promotion format','Secondary data from a loyalty programme industry report'], ans:1, exp:'Using an individual customer\'s visit frequency data to identify a potential lapse and trigger a personalised retention offer is exactly what CRM is designed to do — managing individual customer relationships to maximise loyalty through timely, relevant interactions.' },
+  { topic:'Ethics & Privacy', q:'A Malaysian telco uses call metadata (who customers call, how often, at what times) to infer which customers are having relationship difficulties — and sells those profiles to a divorce lawyer marketing company. Customers consented to data collection in the standard ToS. Which of the following best describes the ethical issue?', opts:['This is acceptable because customers signed the ToS and legal consent was obtained','This violates the value exchange principle — customers shared call data to make phone calls, not to have personal relationship inferences sold to third parties','This is only an issue if the telco profits from the sale','This is a sampling error in the data collection process'], ans:1, exp:'Legal compliance is not the same as ethical behaviour. Customers shared call data to use a phone service — they could not reasonably have anticipated this use. The value exchange principle requires that data is used only for purposes the consumer genuinely understood and agreed to. Using sensitive inferences for commercial gain without meaningful consent is a serious ethical violation.' },
+  { topic:'Ethics & Privacy — PDPA', q:'A Malaysian online retailer collects customer email addresses during checkout to send order confirmations. Three months later, it uses those same emails to sign customers up for a paid third-party newsletter without asking. Under Malaysia\'s PDPA 2010, this is:', opts:['Permissible because the email addresses were legitimately obtained','A violation — the data was collected for order confirmation, not for signing customers up for unrelated third-party services','Permissible if the newsletter is related to the same product category','Acceptable because no financial data was shared'], ans:1, exp:'PDPA requires that personal data be used only for the purpose it was collected. Collecting emails for order confirmation and then using them to subscribe customers to a third-party newsletter (a completely different purpose, and without consent) is a violation of PDPA — regardless of how the original data was obtained.' },
+  { topic:'Connecting Concepts', q:'A first-year marketing student argues: "Marketing research always produces objective truth — if you survey enough people, the findings are automatically reliable." Which response best corrects this misunderstanding?', opts:['The student is correct — larger samples always produce accurate findings','Research can be distorted at every step: by poorly defined problems, leading questions, unrepresentative samples, biased analysis, or managers who only look for findings that confirm their existing beliefs','Only experimental research produces reliable findings — surveys are never objective','The student is correct for quantitative research but not for qualitative research'], ans:1, exp:'Marketing research is a human process with opportunities for error and bias at every stage — from how the problem is defined, to how questions are worded, to how findings are interpreted. A large survey with a leading question still produces biased data. Critical evaluation of research quality — not just sample size — is essential for any marketing professional.' },
+];
+
+let fqCur = 0, fqScore = 0, fqLog = [], fqAnswered = false;
+
+function renderFQ() {
+  fqAnswered = false;
+  const q = FQ[fqCur];
+  document.getElementById('fq-prog').textContent = 'Question ' + (fqCur + 1) + ' of 10';
+  document.getElementById('fq-topic').textContent = q.topic.toUpperCase();
+  document.getElementById('fq-question').textContent = q.q;
+  document.getElementById('fq-feedback').className = 'fq-feedback';
+  document.getElementById('fq-feedback').textContent = '';
+  document.getElementById('fq-next').className = 'fq-next';
+  const optsEl = document.getElementById('fq-opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((text, i) => {
+    const letters = ['A','B','C','D'];
+    const btn = document.createElement('div');
+    btn.className = 'fq-opt';
+    btn.innerHTML = `<span class="fq-badge">${letters[i]}</span><span>${text}</span>`;
+    btn.onclick = () => fqAnswer(i);
+    optsEl.appendChild(btn);
+  });
+}
+
+function fqAnswer(idx) {
+  if (fqAnswered) return;
+  fqAnswered = true;
+  const q = FQ[fqCur];
+  const correct = idx === q.ans;
+  if (correct) fqScore++;
+  fqLog.push({ q: q.q, ok: correct, correctAns: q.opts[q.ans] });
+  document.querySelectorAll('.fq-opt').forEach((o, i) => {
+    o.classList.add('disabled');
+    if (i === q.ans) o.classList.add('correct');
+    else if (i === idx && !correct) o.classList.add('wrong');
+  });
+  const fb = document.getElementById('fq-feedback');
+  fb.className = 'fq-feedback show ' + (correct ? 'fqf-c' : 'fqf-w');
+  fb.textContent = (correct ? '✓ Correct. ' : '✗ Not quite. ') + q.exp;
+  const nb = document.getElementById('fq-next');
+  nb.className = 'fq-next show';
+  nb.textContent = fqCur < 9 ? 'Next question →' : 'See results →';
+}
+
+function fqNext() {
+  fqCur++;
+  if (fqCur >= 10) { showFQResults(); return; }
+  renderFQ();
+}
+
+function showFQResults() {
+  document.getElementById('fquiz-card').style.display = 'none';
+  document.getElementById('fquiz-results').style.display = 'block';
+  const pct = Math.round(fqScore / 10 * 100);
+  document.getElementById('final-score-val').textContent = fqScore;
+  document.getElementById('bd-c').textContent = fqScore;
+  document.getElementById('bd-w').textContent = 10 - fqScore;
+  document.getElementById('bd-p').textContent = pct + '%';
+  setTimeout(() => {
+    document.getElementById('ring-arc').style.strokeDashoffset = 314.2 - (314.2 * fqScore / 10);
+  }, 200);
+  const msgs = [
+    [90, 'Excellent work! 🎓', 'You have a strong command of all Chapter 4 concepts. You are well prepared for assessments.'],
+    [70, 'Great effort!', 'Good understanding overall. Review the questions you missed — pay attention to the difference between data and insight, and the ethical dimension.'],
+    [50, 'Getting there.', 'Re-read the sections you struggled with. Focus especially on the research process and the distinction between the three information sources.'],
+    [0, 'Keep going.', 'Go back through the sections and re-read carefully before retrying. Focus on understanding the concepts, not just memorising definitions.'],
+  ];
+  const [, title, sub] = msgs.find(([t]) => pct >= t);
+  document.getElementById('res-title').textContent = title;
+  document.getElementById('res-sub').textContent = sub;
+  document.getElementById('review-rows').innerHTML = fqLog.map((r, i) => `
+    <div class="review-row">
+      <span class="review-icon">${r.ok ? '✅' : '❌'}</span>
+      <div><div class="review-q">Q${i + 1}. ${r.q}</div>${!r.ok ? `<div class="review-ans">Correct answer: ${r.correctAns}</div>` : ''}</div>
+    </div>`).join('');
+  const ns = document.getElementById('ns-6');
+  if (ns) ns.textContent = fqScore + '/10';
+}
+
+function restartFQ() {
+  fqCur = 0; fqScore = 0; fqLog = []; fqAnswered = false;
+  document.getElementById('fquiz-card').style.display = 'block';
+  document.getElementById('fquiz-results').style.display = 'none';
+  renderFQ();
+}
+
+renderFQ();
+</script>
+</body>
+</html>
